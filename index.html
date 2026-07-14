@@ -138,10 +138,12 @@ const quiz=[
  {q:'In a star schema, numeric business events usually live in…',a:['a fact table','a role table','a bridge only'],correct:0}
 ];
 const initialDone=Object.fromEntries(courses.map(c=>[c.id,c.defaultDone]));
-let state=JSON.parse(localStorage.getItem('sqlEngineerState')||'null')||{done:initialDone,weeks:{},notes:'',filter:'all'};
+const memoryStore={};
+const storage={get:key=>{try{return globalThis.localStorage?.getItem(key)??memoryStore[key]??null}catch{return memoryStore[key]??null}},set:(key,value)=>{memoryStore[key]=value;try{globalThis.localStorage?.setItem(key,value)}catch{}}};
+let state=JSON.parse(storage.get('sqlEngineerState')||'null')||{done:initialDone,weeks:{},notes:'',filter:'all'};
 let activeChallenge=0;
 const $=s=>document.querySelector(s);
-function save(){localStorage.setItem('sqlEngineerState',JSON.stringify(state))}
+function save(){storage.set('sqlEngineerState',JSON.stringify(state))}
 function toast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 function renderNav(){
  $('#sideNav').innerHTML=courses.map(c=>'<a class="road-link '+(state.done[c.id]?'done ':'')+'" href="#course-'+c.id+'"><span class="road-num">'+(state.done[c.id]?'✓':c.id)+'</span><span>'+c.title+'</span><span class="road-time">'+c.hours+'h</span></a>').join('');
