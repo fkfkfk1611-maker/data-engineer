@@ -139,7 +139,7 @@ const quiz=[
 ];
 const initialDone=Object.fromEntries(courses.map(c=>[c.id,c.defaultDone]));
 const memoryStore={};
-const storage={get:key=>{try{return globalThis.localStorage?.getItem(key)??memoryStore[key]??null}catch{return memoryStore[key]??null}},set:(key,value)=>{memoryStore[key]=value;try{globalThis.localStorage?.setItem(key,value)}catch{}}};
+const storage={get:key=>{try{return (typeof localStorage!=='undefined'?localStorage.getItem(key):null)??memoryStore[key]??null}catch{return memoryStore[key]??null}},set:(key,value)=>{memoryStore[key]=value;try{if(typeof localStorage!=='undefined')localStorage.setItem(key,value)}catch{}}};
 let state=JSON.parse(storage.get('sqlEngineerState')||'null')||{done:initialDone,weeks:{},notes:'',filter:'all'};
 let activeChallenge=0;
 const $=s=>document.querySelector(s);
